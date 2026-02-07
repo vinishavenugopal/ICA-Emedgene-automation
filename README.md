@@ -53,15 +53,20 @@ All orchestration, scheduling, and error handling are handled by **Nextflow**, e
           └───────────────────────┘
 
 
-### Mermaid Diagram (renders on GitHub)
 
+---
+
+### 🚀 With this corrected version:
+
+```markdown
 ```mermaid
 flowchart TD
-    A[Illumina BaseSpace (BSSH)] --> B[autolaunch_monitor.sh<br/>Detect new analyses]
-    B --> C[autolaunch_process.sh<br/>Launch ICA secondary workflow]
-    C --> D[ICA Output Results]
-    D --> E[batchuploademg.py<br/>Upload to Emedgene]
-    E --> F[Emedgene Platform<br/>(Case ingestion & interpretation)]
+    A["Illumina BaseSpace - BSSH"] --> B["autolaunch_monitor.sh<br/>Detect new analyses"]
+    B --> C["autolaunch_process.sh<br/>Launch ICA secondary workflow"]
+    C --> D["ICA Output Results"]
+    D --> E["batchuploademg.py<br/>Upload to Emedgene"]
+    E --> F["Emedgene Platform<br/>Case ingestion & interpretation"]
+
 
 📁 Repository Structure
 ica-emedgene-automation/
