@@ -54,56 +54,26 @@ All orchestration, scheduling, and error handling are handled by **Nextflow**, e
 
 
 
+
 ---
 
-### 🚀 With this corrected version:
-
-```markdown
-```mermaid
-flowchart TD
-    A["Illumina BaseSpace - BSSH"] --> B["autolaunch_monitor.sh<br/>Detect new analyses"]
-    B --> C["autolaunch_process.sh<br/>Launch ICA secondary workflow"]
-    C --> D["ICA Output Results"]
-    D --> E["batchuploademg.py<br/>Upload to Emedgene"]
-    E --> F["Emedgene Platform<br/>Case ingestion & interpretation"]
+## 📁 Repository Structure
 
 
-📁 Repository Structure
-ica-emedgene-automation/
-├── main.nf               # Nextflow pipeline definition
-├── nextflow.config       # Default configuration
-├── configs/              # Dev/Prod configuration profiles
-│   ├── dev.config
-│   └── prod.config
-├── scripts/              # Automation scripts
-│   ├── autolaunch_monitor.sh
-│   ├── autolaunch_process.sh
-│   ├── batchuploademg.py
-│   └── CLI_root/
-│       ├── GermlineEnrichment.CLI_root.txt
-│       └── ...
-├── results/              # Pipeline outputs & logs
-└── data/                 # Optional sample/test data
+---
 
-🧩 Workflow Components
+## ⚙️ Configuration
 
-Step	Script	Description
-1. Monitor BaseSpace	autolaunch_monitor.sh	Detects new BSSH analyses and downloads manifests.
-2. Run ICA Pipeline	autolaunch_process.sh	Links FASTQs and launches the Hemline enrichment workflow on ICA.
-3. Upload to Emedgene	batchuploademg.py	Builds and uploads batch cases to Emedgene using API authentication.
+Before running, export these environment variables:
 
-⚙️ Configuration
-Environment Variables
-
-Before running, export the following environment variables:
+```bash
 export ICA_API_KEY="your_ica_api_key"
 export BSSH_ACCESS_TOKEN="your_bssh_token"
 export EMG_USERNAME="your_email@example.com"
 export EMG_PASSWORD="your_password"
 
-nextflow.config
+You can also configure defaults in nextflow.config:
 
-Default parameters and runtime options are defined in nextflow.config:
 params {
   bssh_project_id   = 'a7208a06-2a83-4ae8-90bc-6997889754f0'
   ica_project_id    = '04c8fc29-089c-4571-b002-c81ccdce49d9'
@@ -111,71 +81,63 @@ params {
   output_dir        = './results'
 }
 
-process {
-  executor = 'local'
-  cpus = 4
-  memory = '8 GB'
-  errorStrategy = 'retry'
-  maxRetries = 2
-}
-
-Override with a specific environment config if needed:
-nextflow run main.nf -c configs/prod.config -resume
-
 🧠 Usage
 Run Once
+
 nextflow run main.nf -resume
 
 Run Continuously (via cron)
 
 To check BaseSpace every hour:
+
 */60 * * * * cd /path/to/ica-emedgene-automation && nextflow run main.nf -resume
 
-Switch Profiles
-nextflow run main.nf -c configs/dev.config -resume
+Switch to a Different Environment
+
+nextflow run main.nf -c configs/prod.config -resume
 
 📊 Outputs
 Directory	Description
-results/logs/	Monitoring and ICA job logs
-results/ica_outputs/	ICA secondary analysis results
-results/emedgene_uploads/	Upload confirmations & logs
-results/report.html	Nextflow execution summary
-results/timeline.html	Interactive process timeline
+results/logs/	BaseSpace monitoring and ICA logs
+results/ica_outputs/	ICA secondary analysis outputs
+results/emedgene_uploads/	Upload logs and confirmation files
+results/report.html	Nextflow run summary
+results/timeline.html	Interactive timeline for each process
 
 🧱 Requirements
 Tool	Minimum Version	Purpose
 Nextflow	≥ 23.04	Workflow orchestration
-Python	≥ 3.8	Emedgene upload logic
-Node.js	≥ 16	Runs BatchCasesCreator.js
+Python	≥ 3.8	Emedgene upload script
+Node.js	≥ 16	Required for BatchCasesCreator.js
 jq	any	JSON parsing in bash
-ICA CLI (icav2)	latest	Interface to ICA platform
+ICA CLI (icav2)	latest	Interface to ICA
 
-Install Nextflow:
+To install Nextflow:
+
 curl -s https://get.nextflow.io | bash
 mv nextflow /usr/local/bin/
 
 🔐 Authentication Flow
 
-1. autolaunch_monitor.sh & autolaunch_process.sh use ICA API keys and BSSH tokens for ICA access.
+1. autolaunch_monitor.sh and autolaunch_process.sh use ICA API keys and BSSH tokens to access sequencing data and workflows.
 
-2. batchuploademg.py authenticates to Emedgene, retrieves a bearer token, and pushes case data.
+2. batchuploademg.py logs in to Emedgene using environment credentials and receives a bearer token for authenticated uploads.
 
-3. Credentials are read securely from environment variables, not stored in the repository.
+3. No credentials are stored inside the repository — all are provided at runtime.
 
 ⚡ Error Handling
 
-- Automatic retries for transient errors (maxRetries = 2)
-- Resume partial executions with:
+Each process automatically retries failed steps (maxRetries = 2).
 
-	nextflow run main.nf -resume
+You can resume incomplete workflows using:
 
-- Detailed logs are saved in:
+nextflow run main.nf -resume
 
-	- results/logs/
+Logs are saved in:
 
-	- nextflow.log
+results/logs/
 
-🧑‍💻 Author
+nextflow.log
 
 Vinisha Venugopal
 Bioinformatics Scientist - Clinical Genomics Lab 
