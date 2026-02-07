@@ -71,6 +71,7 @@ export ICA_API_KEY="your_ica_api_key"
 export BSSH_ACCESS_TOKEN="your_bssh_token"
 export EMG_USERNAME="your_email@example.com"
 export EMG_PASSWORD="your_password"
+```
 
 You can also configure defaults in nextflow.config:
 
@@ -81,43 +82,58 @@ params {
   output_dir        = './results'
 }
 
-🧠 Usage
+## 🧠 Usage
+
 Run Once
 
+```bash
 nextflow run main.nf -resume
+```
 
 Run Continuously (via cron)
 
 To check BaseSpace every hour:
 
+```bash
 */60 * * * * cd /path/to/ica-emedgene-automation && nextflow run main.nf -resume
+```
 
 Switch to a Different Environment
 
+```bash
 nextflow run main.nf -c configs/prod.config -resume
+```
 
-📊 Outputs
-Directory	Description
-results/logs/	BaseSpace monitoring and ICA logs
-results/ica_outputs/	ICA secondary analysis outputs
-results/emedgene_uploads/	Upload logs and confirmation files
-results/report.html	Nextflow run summary
-results/timeline.html	Interactive timeline for each process
+## 📊 Outputs
 
-🧱 Requirements
-Tool	Minimum Version	Purpose
-Nextflow	≥ 23.04	Workflow orchestration
-Python	≥ 3.8	Emedgene upload script
-Node.js	≥ 16	Required for BatchCasesCreator.js
-jq	any	JSON parsing in bash
-ICA CLI (icav2)	latest	Interface to ICA
+
+|Directory | Description |
+|------------|-------------|
+| `results/logs/` | BaseSpace monitoring and ICA logs |
+| `results/ica_outputs/` | ICA secondary analysis outputs |
+| `results/emedgene_uploads/` | Upload logs and confirmation files |
+| `results/report.html` | Nextflow run summary |
+| `results/timeline.html` | Interactive timeline for each process |
+
+## 🧱 Requirements
+
+| Tool | Minimum Version | Purpose |
+|------|------------------|---------|
+| **Nextflow** | ≥ 23.04 | Workflow orchestration |
+| **Python** | ≥ 3.8 | Emedgene upload script |
+| **Node.js** | ≥ 16 | Required for `BatchCasesCreator.js` |
+| **jq** | any | JSON parsing in bash |
+| **ICA CLI (`icav2`)** | latest | Interface to ICA |
+
 
 To install Nextflow:
 
+```bash
 curl -s https://get.nextflow.io | bash
 mv nextflow /usr/local/bin/
+```
 
-🔐 Authentication Flow
+##  Authentication Flow
 
 1. autolaunch_monitor.sh and autolaunch_process.sh use ICA API keys and BSSH tokens to access sequencing data and workflows.
 
@@ -125,20 +141,22 @@ mv nextflow /usr/local/bin/
 
 3. No credentials are stored inside the repository — all are provided at runtime.
 
-⚡ Error Handling
+##  Error Handling
 
 Each process automatically retries failed steps (maxRetries = 2).
 
 You can resume incomplete workflows using:
 
+```bash
 nextflow run main.nf -resume
+```
 
 Logs are saved in:
 
-results/logs/
+- results/logs/
+- nextflow.log
 
-nextflow.log
-
+## 🧑‍💻 Author
 Vinisha Venugopal
 Bioinformatics Scientist - Clinical Genomics Lab 
 📧 contact: vinishavvenugopal@gmail.com
